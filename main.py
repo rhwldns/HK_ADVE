@@ -36,7 +36,7 @@ async def create_ad(ctx, *, content):
             f.seek(0)
             f.truncate()
 
-    coll.insert_one({"_id": str(content)})
+    coll.insert_one({"_id": str(content), "least": None, "max": None, "channel": None})
     return await ctx.reply('광고 등록이 완료되었습니다.', allowed_mentions=am)
 
 @bot.command(name='frequency')
@@ -86,6 +86,7 @@ async def settime(ctx, *, name):
     else:
         await ctx.reply(f'`{name}` 이라는 광고를 찾을 수 없습니다.', allowed_mentions=am)
 
+
 @bot.command(name='content')
 async def setcontent(ctx, *, name):
     if coll.find_one({"_id": str(name)}):
@@ -113,6 +114,33 @@ async def setcontent(ctx, *, name):
 
     else:
         await ctx.reply(f'`{name}` 이라는 광고를 찾을 수 없습니다.', allowed_mentions=am)
+
+@bot.command(name='expose-add')
+async def add_expose(ctx, *, name):
+    if coll.find_one({"_id": str(name)}):
+        def check(m):
+            return m.author == ctx.author and m.channel == ctx.channel
+
+        await ctx.reply(f'지금 등록할 채널 **ID 아이디**를 입력해주세요.', allowed_mentions=am)
+        msg = await bot.wait_for('message', check=check)
+        msg = msg.content
+
+        find = {"_id": str(name)}
+        setdata = {"$set": {'channel1': int(msg)}}
+        coll.update_one(find, setdata)
+
+        await ctx.reply('등록이 완료되었습니다!', allowed_mentions=am)
+
+
+@bot.command(name='expose-sub')
+async def sub_expose(ctx, *, name):
+    if coll.find_one({"_id": str(name)}):
+
+        find = {"_id": str(name)}
+        setdata = {"$set": {'channel': None}}
+        coll.update_one(find, setdata)
+
+        await ctx.reply('삭제가 완료되었습니다!', allowed_mentions=am)
 
 
 bot.run(os.getenv("TOKEN"))
