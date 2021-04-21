@@ -24,15 +24,15 @@ async def on_ready():
 @bot.command(name='create')
 async def create_ad(ctx, *, content):
     if os.path.isdir('./Ads/'):
-        with open(f'./Ads/{content}.txt', 'a,', encoding='UTF-8') as f:
-            f.write(1)
+        with open(f'./Ads/{content}.txt', 'a', encoding='UTF-8') as f:
+            f.write('1')
             f.seek(0)
             f.truncate()
 
     else:
         os.mkdir('./Ads/')
         with open(f'./Ads/{content}.txt', 'a,', encoding='UTF-8') as f:
-            f.write(1)
+            f.write('1')
             f.seek(0)
             f.truncate()
 
@@ -83,6 +83,9 @@ async def settime(ctx, *, name):
 
         await ctx.reply('노출 수 설정이 완료되었습니다.', allowed_mentions=am)
 
+    else:
+        await ctx.reply(f'`{name}` 이라는 광고를 찾을 수 없습니다.', allowed_mentions=am)
+
 @bot.command(name='content')
 async def setcontent(ctx, *, name):
     if coll.find_one({"_id": str(name)}):
@@ -107,6 +110,9 @@ async def setcontent(ctx, *, name):
                     f.write(msg)
 
         await ctx.reply('완료되었습니다.', allowed_mentions=am)
+
+    else:
+        await ctx.reply(f'`{name}` 이라는 광고를 찾을 수 없습니다.', allowed_mentions=am)
 
 
 bot.run(os.getenv("TOKEN"))
