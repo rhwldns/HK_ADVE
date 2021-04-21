@@ -83,5 +83,30 @@ async def settime(ctx, *, name):
 
         await ctx.reply('노출 수 설정이 완료되었습니다.', allowed_mentions=am)
 
+@bot.command(name='content')
+async def setcontent(ctx, *, name):
+    if coll.find_one({"_id": str(name)}):
+        def check(m):
+            return m.author == ctx.author and m.channel == ctx.channel
+
+        await ctx.reply(f'지금 {name} 광고의 내용을 입력해주세요.', allowed_mentions=am)
+        msg = await bot.wait_for('message', check=check)
+        msg = msg.content
+
+        if os.path.isfile(f'./Ads/{name}.txt'):
+            with open(f'./Ads/{name}.txt', 'a', encoding='UTF-8') as f:
+                f.write(msg)
+        else:
+            if os.path.isdir('./Ads/'):
+                with open(f'./Ads/{name}.txt', 'a,', encoding='UTF-8') as f:
+                    f.write(msg)
+
+            else:
+                os.mkdir('./Ads/')
+                with open(f'./Ads/{name}.txt', 'a,', encoding='UTF-8') as f:
+                    f.write(msg)
+
+        await ctx.reply('완료되었습니다.', allowed_mentions=am)
+
 
 bot.run(os.getenv("TOKEN"))
