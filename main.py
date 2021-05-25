@@ -22,6 +22,49 @@ async def on_ready():
     await bot.change_presence(status = discord.Status.online, activity = discord.Game(f"Made By {u}"))
 
 
+@bot.event
+async def on_message(ctx: commands.Context):
+    with open(f'Messages/{str(ctx.channel.id)}.txt', 'a', encoding="UTF-8") as f:
+        a = f.readline()
+        a += 1
+        f.seek()
+        f.truncate(0)
+        f.write(str(a))
+
+    if coll.find_one({"channel1": str(ctx.channel.id)}) or coll.find_one({"channel2": str(ctx.channel.id)}):
+        if coll.find_one({"channel1": str(ctx.channel.id)}):
+            data = coll.find_one({"channel1": str(ctx.channel.id)})
+            if int(data['least']) == int(a):
+                with open(f'./Ads/{data["name"]}.txt', 'r+', encoding="UTF-8")as f:
+                    des = f.readlines()
+                    for i in des:
+                        des += i
+                embed = discord.Embed(
+                    title=data['_id'],
+                    description=str(des),
+                    color=0x00FFFF
+                )
+                await ctx.channel.send(embed=embed)
+            else:
+                pass
+
+        elif coll.find_one({"channel2": str(ctx.channel.id)}):
+            data = coll.find_one({"channel1": str(ctx.channel.id)})
+            if int(data['least']) == int(a):
+                with open(f'./Ads/{data["name"]}.txt', 'r+', encoding="UTF-8")as f:
+                    des = f.readlines()
+                    for i in des:
+                        des += i
+                embed = discord.Embed(
+                    title=data['_id'],
+                    description=str(des),
+                    color=0x00FFFF
+                )
+                await ctx.channel.send(embed=embed)
+            else:
+                pass
+
+
 @bot.command(name='create')
 async def create_ad(ctx, *, content):
     if os.path.isdir('./Ads/'):
