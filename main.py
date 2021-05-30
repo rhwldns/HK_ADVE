@@ -277,7 +277,7 @@ async def help_commands(ctx):
         color=0x00FFFF
     )
     embed.add_field(
-        name='광고를 적용하는 방법',
+        name='광고를 적용하는 방법', # 1~6 완료
         value='1) `.ad create name` - name의 광고 생성\n'
               '2) `.ad frequency name 최소값 최대값` - name 광고 빈도 설정\n'
               '3) `.ad time name 노출회수` - name 광고 노출 수 설정\n'
@@ -287,11 +287,10 @@ async def help_commands(ctx):
         inline=False
     )
     embed.add_field(
-        name='부차적인 명령어',
+        name='부차적인 명령어', # detail 까지 완료
         value='`.ad list` - 광고 목록 표시\n'
               '`.ad delete name` - name 광고 삭제\n'
               '`.ad detail name` - name 광고 정보 표시\n'
-              '`.ad expose-list name` - name 광고가 노출되는 채널 목록 표시\n'
               '`.ad administrator-add @mention` - 해당 사람에게게 광고명령어 사용 권한 추가\n'
               '`.ad administrator-sub @mention` - 해당 사람에게 광고 명령어 사용 권한 제거'
     )
@@ -353,6 +352,13 @@ async def ad_detail(ctx, name: str):
             color=0x00FFFF
         )
         await ctx.send(embed=embed)
+
+
+@bot.command(name='administrator-add')
+async def add_administrator(ctx, user: discord.Member):
+    with open('owners.txt', 'a', encoding='UTF-8') as f:
+        f.write(str(user.id) + '\n')
+    await ctx.send(f'`{await bot.fetch_user(int(user.id))}`님에게 광고 명령어 사용 권한을 추가했습니다.')
 
 
 bot.run(os.getenv("TOKEN"))
