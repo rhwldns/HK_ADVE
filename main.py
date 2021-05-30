@@ -54,7 +54,7 @@ async def on_message(msg):
         else:
             open(f'./Messages/{str(msg.channel.id)}.txt', 'a').close()
 
-        with open(f'Messages/{str(msg.channel.id)}.txt', 'a', encoding="UTF-8") as f:
+        with open(f'./Messages/{str(msg.channel.id)}.txt', 'a', encoding="UTF-8") as f:
             a = f.readline()
             a += 1
             f.truncate(0)
@@ -327,6 +327,15 @@ async def ad_list(ctx):
     await Paginator(
         bot=bot, message=msg, embeds=embeds, only=ctx.author
     ).start()
+
+
+@bot.command(name='delete')
+async def delete_ad(ctx, name: str):
+    if coll.find_one({"_id": name}):
+        coll.delete_one({"_id": name})
+        await ctx.send(f'`{name}` 광고를 삭제했습니다.')
+    else:
+        await ctx.send('광고를 찾을 수 없습니다.')
 
 
 bot.run(os.getenv("TOKEN"))
