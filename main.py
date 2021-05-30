@@ -287,7 +287,7 @@ async def help_commands(ctx):
         inline=False
     )
     embed.add_field(
-        name='부차적인 명령어', # detail 까지 완료
+        name='부차적인 명령어', # admin add 까지 완료
         value='`.ad list` - 광고 목록 표시\n'
               '`.ad delete name` - name 광고 삭제\n'
               '`.ad detail name` - name 광고 정보 표시\n'
@@ -359,6 +359,18 @@ async def add_administrator(ctx, user: discord.Member):
     with open('owners.txt', 'a', encoding='UTF-8') as f:
         f.write(str(user.id) + '\n')
     await ctx.send(f'`{await bot.fetch_user(int(user.id))}`님에게 광고 명령어 사용 권한을 추가했습니다.')
+
+
+@bot.command(name='administrator-sub')
+async def add_administrator(ctx, user: discord.Member):
+    with open("owners.txt", "r") as f:
+        lines = f.readlines()
+
+    with open("owners.txt", "w") as f:
+        for line in lines:
+            if line.strip("\n") != str(user.id):
+                f.write(line)
+    await ctx.send(f'`{await bot.fetch_user(int(user.id))}`님에게 광고 명령어 사용 권한을 제거했습니다.')
 
 
 bot.run(os.getenv("TOKEN"))
