@@ -42,7 +42,7 @@ def check():
 @bot.event
 @check()
 async def on_message(msg):
-    if msg.content.startswith('.ad'):
+    if msg.content.startswith[0] == ".ad ":
         await bot.process_commands(msg)
         pass
     elif msg.author.bot:
