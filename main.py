@@ -19,53 +19,82 @@ am = discord.AllowedMentions.none()
 async def on_ready():
     print(f'{bot.user} On Ready.')
     u = await bot.fetch_user(443734180816486441)
-    await bot.change_presence(status = discord.Status.online, activity = discord.Game(f"Made By {u}"))
+    while True:
+        await asyncio.sleep(7)
+        await bot.change_presence(status = discord.Status.online, activity = discord.Game(f"Made By {u}"))
+        await asyncio.sleep(7)
+        await bot.change_presence(status=discord.Status.online, activity=discord.Game(f".ad help"))
+
+
+def check():
+    async def predicate(ctx):
+        with open('owners.txt', 'r', encoding='UTF-8') as f:
+            line = f.readlines()
+
+        if str(ctx.author.id) in line:
+            return True
+        else:
+            return False
+    return commands.check(predicate)
 
 
 @bot.event
-async def on_message(ctx: commands.Context):
-    with open(f'Messages/{str(ctx.channel.id)}.txt', 'a', encoding="UTF-8") as f:
-        a = f.readline()
-        a += 1
-        f.seek()
-        f.truncate(0)
-        f.write(str(a))
+@check()
+async def on_message(msg):
+    if msg.content.startswith('.ad'):
+        await bot.process_commands(msg)
+        pass
+    elif msg.author.bot:
+        pass
 
-    if coll.find_one({"channel1": str(ctx.channel.id)}) or coll.find_one({"channel2": str(ctx.channel.id)}):
-        if coll.find_one({"channel1": str(ctx.channel.id)}):
-            data = coll.find_one({"channel1": str(ctx.channel.id)})
-            if int(data['least']) == int(a):
-                with open(f'./Ads/{data["name"]}.txt', 'r+', encoding="UTF-8")as f:
-                    des = f.readlines()
-                    for i in des:
-                        des += i
-                embed = discord.Embed(
-                    title=data['_id'],
-                    description=str(des),
-                    color=0x00FFFF
-                )
-                await ctx.channel.send(embed=embed)
-            else:
-                pass
+    else:
+        if os.path.isfile(f'./Messages/{str(msg.channel.id)}.txt'):
+            pass
+        else:
+            open(f'./Messages/{str(msg.channel.id)}.txt', 'a').close()
 
-        elif coll.find_one({"channel2": str(ctx.channel.id)}):
-            data = coll.find_one({"channel1": str(ctx.channel.id)})
-            if int(data['least']) == int(a):
-                with open(f'./Ads/{data["name"]}.txt', 'r+', encoding="UTF-8")as f:
-                    des = f.readlines()
-                    for i in des:
-                        des += i
-                embed = discord.Embed(
-                    title=data['_id'],
-                    description=str(des),
-                    color=0x00FFFF
-                )
-                await ctx.channel.send(embed=embed)
-            else:
-                pass
+        with open(f'Messages/{str(msg.channel.id)}.txt', 'a', encoding="UTF-8") as f:
+            a = f.readline()
+            a += 1
+            f.truncate(0)
+            f.write(str(a))
+
+        if coll.find_one({"channel1": str(msg.channel.id)}) or coll.find_one({"channel2": str(msg.channel.id)}):
+            if coll.find_one({"channel1": str(msg.channel.id)}):
+                data = coll.find_one({"channel1": str(msg.channel.id)})
+                if int(data['least']) == int(a):
+                    with open(f'./Ads/{data["name"]}.txt', 'r+', encoding="UTF-8")as f:
+                        des = f.readlines()
+                        for i in des:
+                            des += i
+                    embed = discord.Embed(
+                        title=data['_id'],
+                        description=str(des),
+                        color=0x00FFFF
+                    )
+                    await msg.channel.send(embed=embed)
+                else:
+                    pass
+
+            elif coll.find_one({"channel2": str(msg.channel.id)}):
+                data = coll.find_one({"channel1": str(msg.channel.id)})
+                if int(data['least']) == int(a):
+                    with open(f'./Ads/{data["name"]}.txt', 'r+', encoding="UTF-8")as f:
+                        des = f.readlines()
+                        for i in des:
+                            des += i
+                    embed = discord.Embed(
+                        title=data['_id'],
+                        description=str(des),
+                        color=0x00FFFF
+                    )
+                    await msg.channel.send(embed=embed)
+                else:
+                    pass
 
 
 @bot.command(name='create')
+@check()
 async def create_ad(ctx, *, content):
     if os.path.isdir('./Ads/'):
         with open(f'./Ads/{content}.txt', 'a', encoding='UTF-8') as f:
@@ -85,6 +114,7 @@ async def create_ad(ctx, *, content):
 
 
 @bot.command(name='frequency')
+@check()
 async def set_frequency(ctx, *, name):
     if coll.find_one({"_id": str(name)}):
         # least: 최소 노출 빈도, max = 최대 노출 빈도
@@ -112,7 +142,8 @@ async def set_frequency(ctx, *, name):
 
 
 @bot.command(name='time')
-async def settime(ctx, *, name):
+@check()
+async def set_time(ctx, *, name):
     if coll.find_one({"_id": str(name)}):
 
         def check(m):
@@ -133,7 +164,8 @@ async def settime(ctx, *, name):
 
 
 @bot.command(name='content')
-async def setcontent(ctx, *, name):
+@check()
+async def set_content(ctx, *, name):
     if coll.find_one({"_id": str(name)}):
         def check(m):
             return m.author == ctx.author and m.channel == ctx.channel
@@ -162,6 +194,7 @@ async def setcontent(ctx, *, name):
 
 
 @bot.command(name='expose-add')
+@check()
 async def add_expose(ctx, *, name):
     if coll.find_one({"_id": str(name)}):
         def check(m):
@@ -203,6 +236,7 @@ async def add_expose(ctx, *, name):
 
 
 @bot.command(name='expose-sub')
+@check()
 async def sub_expose(ctx, *, name):
     if coll.find_one({"_id": str(name)}):
 
@@ -231,5 +265,34 @@ async def sub_expose(ctx, *, name):
         except asyncio.TimeoutError:
             await ctx.send('시간이 초과되었습니다.')
 
+
+@bot.command(name='help')
+@check()
+async def help_commands(ctx):
+
+    embed = discord.Embed(
+        title='HKAD 봇 도움말',
+        description='',
+        color=0x00FFFF
+    )
+    embed.add_field(
+        name='광고를 적용하는 방법',
+        value='1) `.ad create name` - name의 광고 생성\n'
+              '2) `.ad frequency name 최소값 최대값` - name 광고 빈도 설정\n'
+              '3) `.ad time name 노출회수` - name 광고 노출 수 설정\n'
+              '4) `.ad content name` - name 광고 내용 설정\n'
+              '5) `.ad expose-add name channel(Id)` - name 광고가 노출될 채널을 추가\n'
+              '6) `.ad expose-sub name channel(Id)` - name 광고가 노출될 채널을 제거\n',
+        inline=False
+    )
+    embed.add_field(
+        name='부차적인 명령어',
+        value='`.ad list` - 광고 목록 표시\n'
+              '`.ad delete name` - name 광고 삭제\n'
+              '`.ad detail name` - name 광고 정보 표시\n'
+              '`.ad expose-list name` - name 광고가 노출되는 채널 목록 표시\n'
+              '`.ad administrator-add @mention` - 해당 사람에게게 광고명령어 사용 권한 추가\n'
+              '`.ad administrator-sub @mention` - 해당 사람에게 광고 명령어 사용 권한 제거'
+    )
 
 bot.run(os.getenv("TOKEN"))
