@@ -338,4 +338,21 @@ async def delete_ad(ctx, name: str):
         await ctx.send('광고를 찾을 수 없습니다.')
 
 
+@bot.command(name='detail')
+async def ad_detail(ctx, name: str):
+    if coll.find_one({"_id": name}):
+        ad_data = coll.find_one({"_id": name})
+        least = ad_data['least']
+        max = ad_data['max']
+        channel1 = ad_data['channel1']
+        channel2 = ad_data['channel2']
+        embed = discord.Embed(
+            title=f'{name} 광고 정보',
+            description=f'광고 이름 : {name}\n최소 노출 수 : {least}, 최대 노출 수 : {max}\n\n'
+                        f'등록된 채널 1 : <#{channel1}>\n등록된 채널 2 : {channel2}',
+            color=0x00FFFF
+        )
+        await ctx.send(embed=embed)
+
+
 bot.run(os.getenv("TOKEN"))
