@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import os
 from pymongo import MongoClient
 import asyncio
+from EZPaginator import Paginator
 
 coll = MongoClient('mongodb://localhost:27017/').HK_ADVE.ads
 
@@ -294,5 +295,38 @@ async def help_commands(ctx):
               '`.ad administrator-add @mention` - 해당 사람에게게 광고명령어 사용 권한 추가\n'
               '`.ad administrator-sub @mention` - 해당 사람에게 광고 명령어 사용 권한 제거'
     )
+
+
+@bot.command(name='list')
+async def ad_list(ctx):
+    embeds = []
+    file_list = os.listdir('./Ads/')
+    file_list = [file for file in file_list if file.endswith(".txt")]
+
+    for i in file_list:
+        ii = i.replace('.txt', '')
+        file_list.remove(i)
+        file_list.append(ii)
+
+    for i in file_list:
+        with open(f'./Ads/{i}.txt', 'r', encoding='UTF-8') as f:
+            lines = f.readlines()
+
+        l = ''
+
+        for i in lines:
+            l += i
+        embed = discord.Embed(
+            title=f'{i}',
+            description=f'{l}',
+            color=0x00FFFF
+        )
+
+        embeds.append(embed)
+    msg = await ctx.send(embed=embeds[0])
+    await Paginator(
+        bot=bot, message=msg, embeds=embeds, only=ctx.author
+    ).start()
+
 
 bot.run(os.getenv("TOKEN"))
