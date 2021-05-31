@@ -20,17 +20,18 @@ am = discord.AllowedMentions.none()
 async def on_ready():
     print(f'{bot.user} On Ready.')
     u = await bot.fetch_user(443734180816486441)
-    while True:
-        await asyncio.sleep(7)
-        await bot.change_presence(status = discord.Status.online, activity = discord.Game(f"Made By {u}"))
-        await asyncio.sleep(7)
-        await bot.change_presence(status=discord.Status.online, activity=discord.Game(f".ad help"))
+    await bot.change_presence(status=discord.Status.online, activity=discord.Game(f".ad help"))
 
 
 def check():
     async def predicate(ctx):
         with open('owners.txt', 'r', encoding='UTF-8') as f:
             line = f.readlines()
+
+        for i in line:
+            ii = i.replace('\n', '')
+            line.remove(i)
+            line.append(ii)
 
         if str(ctx.author.id) in line:
             return True
@@ -42,7 +43,7 @@ def check():
 @bot.event
 @check()
 async def on_message(msg):
-    if msg.content.startswith[0] == ".ad ":
+    if msg.content.startswith == ".ad ":
         await bot.process_commands(msg)
         pass
     elif msg.author.bot:
@@ -52,12 +53,16 @@ async def on_message(msg):
         if os.path.isfile(f'./Messages/{str(msg.channel.id)}.txt'):
             pass
         else:
-            open(f'./Messages/{str(msg.channel.id)}.txt', 'a').close()
+            with open(f'./Messages/{str(msg.channel.id)}.txt', 'w') as f:
+                f.write('0')
 
-        with open(f'./Messages/{str(msg.channel.id)}.txt', 'a', encoding="UTF-8") as f:
-            a = f.readline()
-            a += 1
-            f.truncate(0)
+        with open(f'./Messages/{str(msg.channel.id)}.txt', 'r', encoding="UTF-8") as f:
+            a = int(f.readlines()[0])
+            await msg.channel.send(a)
+
+        a += 1
+
+        with open(f'./Messages/{str(msg.channel.id)}.txt', 'w', encoding="UTF-8") as f:
             f.write(str(a))
 
         if coll.find_one({"channel1": str(msg.channel.id)}) or coll.find_one({"channel2": str(msg.channel.id)}):
