@@ -43,10 +43,7 @@ def check():
 @bot.event
 @check()
 async def on_message(msg):
-    if msg.content.startswith == ".ad ":
-        await bot.process_commands(msg)
-        pass
-    elif msg.author.bot:
+    if msg.author.bot:
         pass
 
     else:
@@ -58,7 +55,6 @@ async def on_message(msg):
 
         with open(f'./Messages/{str(msg.channel.id)}.txt', 'r', encoding="UTF-8") as f:
             a = int(f.readlines()[0])
-            await msg.channel.send(a)
 
         a += 1
 
@@ -66,16 +62,19 @@ async def on_message(msg):
             f.write(str(a))
 
         if coll.find_one({"channel1": str(msg.channel.id)}) or coll.find_one({"channel2": str(msg.channel.id)}):
+
             if coll.find_one({"channel1": str(msg.channel.id)}):
                 data = coll.find_one({"channel1": str(msg.channel.id)})
-                if int(data['least']) == int(a):
+                if int(data['least']) <= int(a):
+                    destr = ''
                     with open(f'./Ads/{data["name"]}.txt', 'r+', encoding="UTF-8")as f:
                         des = f.readlines()
                         for i in des:
-                            des += i
+                            destr += i
                     embed = discord.Embed(
                         title=data['_id'],
-                        description=str(des),
+
+                        description=str(destr),
                         color=0x00FFFF
                     )
                     await msg.channel.send(embed=embed)
@@ -84,7 +83,7 @@ async def on_message(msg):
 
             elif coll.find_one({"channel2": str(msg.channel.id)}):
                 data = coll.find_one({"channel1": str(msg.channel.id)})
-                if int(data['least']) == int(a):
+                if int(data['least']) <= int(a):
                     with open(f'./Ads/{data["name"]}.txt', 'r+', encoding="UTF-8")as f:
                         des = f.readlines()
                         for i in des:
@@ -97,6 +96,8 @@ async def on_message(msg):
                     await msg.channel.send(embed=embed)
                 else:
                     pass
+
+    await bot.process_commands(msg)
 
 
 @bot.command(name='create')
@@ -203,11 +204,11 @@ async def set_content(ctx, *, name):
 @check()
 async def add_expose(ctx, *, name):
     if coll.find_one({"_id": str(name)}):
-        def check(m):
+        def check1(m):
             return m.author == ctx.author and m.channel == ctx.channel
 
         await ctx.reply(f'지금 등록할 채널 **`ID 아이디`**를 입력해주세요.', allowed_mentions=am)
-        msg = await bot.wait_for('message', check=check)
+        msg = await bot.wait_for('message', check=check1)
         msg = msg.content
 
         find = {"_id": str(name)}
@@ -225,13 +226,12 @@ async def add_expose(ctx, *, name):
 
             if str(reaction.emoji) == '✅':
                 await ctx.reply(f'지금 등록할 2번째 채널 **`ID 아이디`**를 입력해주세요.', allowed_mentions=am)
-                msg = await bot.wait_for('message', check=check)
+                msg = await bot.wait_for('message', check=check1)
                 msg = msg.content
 
                 find = {"_id": str(name)}
                 setdata = {"$set": {'channel2': int(msg)}}
                 coll.update_one(find, setdata)
-                await ctx.send('완료되었습니다.')
 
             else:
                 await ctx.send('채널 추가 중단, 첫 번째 채널만 등록했습니다.')
