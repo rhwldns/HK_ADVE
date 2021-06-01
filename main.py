@@ -99,8 +99,9 @@ async def on_message(msg):
 
         file_list = [file for file in os.listdir('./Messages/') if file.endswith(".txt")]
         for i in file_list:
-            with open(f'./Messages/{i}.txt', 'a', encoding='UTF-8') as f:
+            with open(f'./Messages/{i}', 'a', encoding='UTF-8') as f:
                 f.truncate(0)
+                f.write('0')
 
 
 @bot.command(name='create')
