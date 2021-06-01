@@ -58,44 +58,57 @@ async def on_message(msg):
                 with open(f'./Messages/{msg.channel.id}.txt', 'r', encoding='UTF-8') as f:
                     ff = f.readlines()[0]
 
-                if int(i['least']) <= int(ff):
-                    ad_content = ''
-                    with open(f'./Ads/{i["_id"]}.txt', 'r', encoding='UTF-8') as f:
-                        ff = f.readlines()
+                if int(i['count']) < int(i['count1']):
+                    continue
+                else:
+                    if int(i['least']) <= int(ff):
+                        ad_content = ''
+                        with open(f'./Ads/{i["_id"]}.txt', 'r', encoding='UTF-8') as f:
+                            ff = f.readlines()
 
-                    for iii in ff:
-                        ad_content += iii
+                        for iii in ff:
+                            ad_content += iii
 
-                    data = coll.find_one({"_id": str(i['_id'])})
-                    ad_name = data['_id']
-                    embed = discord.Embed(
-                        title=str(ad_name),
-                        description=str(ad_content),
-                        color=0x00FFFF
-                    )
-                    await msg.channel.send(embed=embed)
+                        embed = discord.Embed(
+                            title=str(i['_id']),
+                            description=str(ad_content),
+                            color=0x00FFFF
+                        )
+                        find = {"_id": str(i["_id"])}
+                        set_data = {"$inc": {"count1": 1}}
+                        coll.update_one(find, set_data)
+                        await msg.channel.send(embed=embed)
+
+                    else:
+                        continue
 
             if int(i['channel2']) == int(msg.channel.id):
                 with open(f'./Messages/{msg.channel.id}.txt', 'r', encoding='UTF-8') as f:
                     ff = f.readlines()[0]
 
-                if int(i['least']) <= int(ff):
-                    ad_content = ''
-                    with open(f'./Ads/{i["_id"]}.txt', 'r', encoding='UTF-8') as f:
-                        ff = f.readlines()
+                if int(i['count']) < int(i['count1']):
+                    continue
+                else:
+                    if int(i['least']) <= int(ff):
+                        ad_content = ''
+                        with open(f'./Ads/{i["_id"]}.txt', 'r', encoding='UTF-8') as f:
+                            ff = f.readlines()
 
-                    for iii in ff:
-                        ad_content += iii
+                        for iii in ff:
+                            ad_content += iii
 
-                    embed = discord.Embed(
-                        title=str(i['_id']),
-                        description=str(ad_content),
-                        color=0x00FFFF
-                    )
-                    await msg.channel.send(embed=embed)
+                        embed = discord.Embed(
+                            title=str(i['_id']),
+                            description=str(ad_content),
+                            color=0x00FFFF
+                        )
+                        find = {"_id": str(i["_id"])}
+                        set_data = {"$inc": {"count1": 1}}
+                        coll.update_one(find, set_data)
+                        await msg.channel.send(embed=embed)
 
-            else:
-                continue
+                    else:
+                        continue
 
         file_list = [file for file in os.listdir('./Messages/') if file.endswith(".txt")]
         for i in file_list:
@@ -120,7 +133,7 @@ async def create_ad(ctx, *, content):
             f.seek(0)
             f.truncate()
 
-    coll.insert_one({"_id": str(content), "least": None, "max": None, "count": 0, "channel1": None, "channel2": None})
+    coll.insert_one({"_id": str(content), "count1": 0, "least": None, "max": None, "count": 0, "channel1": None, "channel2": None})
     return await ctx.reply('광고 등록이 완료되었습니다.', allowed_mentions=am)
 
 
@@ -318,9 +331,15 @@ async def ad_list(ctx):
 
         for ii in lines:
             l += ii
+
+        ad_data = coll.find_one({"_id": str(i.replace(".txt", ""))})
+
+        ad_least = ad_data['least']
+        ad_max = ad_data['max']
+        ad_count = ad_data['count']
         embed = discord.Embed(
             title=f'{i.replace(".txt", "")}',
-            description=f'{l}\n\n최소 노출 수 : ',
+            description=f'{l}\n\n최소 노출 수 : {ad_least}\n최대 노출 수 : {ad_max}\n현재 노출 횟수 : {ad_count}',
             color=0x00FFFF
         )
 
