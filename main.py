@@ -50,63 +50,6 @@ async def on_message(msg):
 
         return
 
-    else:  # 일반 message 일 경우 else 문 들어감
-        with open(f'./Messages/{msg.channel.id}.txt', 'r', encoding="UTF-8") as f:
-            a = f.readlines()
-            a = int(a[0])
-            a = a + 1
-
-        with open(f'./Messages/{msg.channel.id}.txt', 'a', encoding="UTF-8") as f:
-            f.truncate(0)
-            f.write(str(a))
-
-        for i in coll.find({}):
-            if int(i['channel1']) == int(msg.channel.id):
-                with open(f'./Messages/{msg.channel.id}.txt', 'r', encoding='UTF-8') as f:
-                    ff = f.readlines()[0]
-
-                if int(i['least']) <= int(ff):
-                    ad_content = ''
-                    with open(f'./Ads/{i["_id"]}.txt', 'r', encoding='UTF-8') as f:
-                        ff = f.readlines()
-
-                    for iii in ff:
-                        ad_content += iii
-
-                    embed = discord.Embed(
-                        title=str(i['_id']),
-                        description=str(ad_content),
-                        color=0x00FFFF
-                    )
-                    await msg.channel.send(embed=embed)
-
-            if int(i['channel2']) == int(msg.channel.id):
-                with open(f'./Messages/{msg.channel.id}.txt', 'r', encoding='UTF-8') as f:
-                    ff = f.readlines()[0]
-
-                if int(i['least']) <= int(ff):
-                    ad_content = ''
-                    with open(f'./Ads/{i["_id"]}.txt', 'r', encoding='UTF-8') as f:
-                        ff = f.readlines()
-
-                    for iii in ff:
-                        ad_content += iii
-
-                    embed = discord.Embed(
-                        title=str(i['_id']),
-                        description=str(ad_content),
-                        color=0x00FFFF
-                    )
-                    await msg.channel.send(embed=embed)
-
-            else:
-                continue
-
-        file_list = [file for file in os.listdir('./Messages/') if file.endswith(".txt")]
-        for i in file_list:
-            with open(f'./Messages/{i}', 'a', encoding='UTF-8') as f:
-                f.truncate(0)
-                f.write('0')
 
 
 @bot.command(name='create')
