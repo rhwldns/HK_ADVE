@@ -63,8 +63,8 @@ async def on_message(msg):
                     with open(f'./Ads/{i["_id"]}.txt', 'r', encoding='UTF-8') as f:
                         ff = f.readlines()
 
-                    for i in ff:
-                        ad_content += i
+                    for iii in ff:
+                        ad_content += iii
 
                     data = coll.find_one({"_id": str(i['_id'])})
                     ad_name = data['_id']
@@ -84,8 +84,8 @@ async def on_message(msg):
                     with open(f'./Ads/{i["_id"]}.txt', 'r', encoding='UTF-8') as f:
                         ff = f.readlines()
 
-                    for i in ff:
-                        ad_content += i
+                    for iii in ff:
+                        ad_content += iii
 
                     embed = discord.Embed(
                         title=str(i['_id']),
