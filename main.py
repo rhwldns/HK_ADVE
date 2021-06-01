@@ -311,23 +311,16 @@ async def ad_list(ctx):
     embeds = []
     file_list = os.listdir('./Ads/')
     file_list = [file for file in file_list if file.endswith(".txt")]
-
+    l = ''
     for i in file_list:
-        ii = i.replace('.txt', '')
-        file_list.remove(i)
-        file_list.append(ii)
-
-    for i in file_list:
-        with open(f'./Ads/{i}.txt', 'r', encoding='UTF-8') as f:
+        with open(f'./Ads/{i}', 'r', encoding='UTF-8') as f:
             lines = f.readlines()
 
-        l = ''
-
-        for i in lines:
-            l += i
+        for ii in lines:
+            l += ii
         embed = discord.Embed(
-            title=f'{i}',
-            description=f'{l}',
+            title=f'{i.replace(".txt", "")}',
+            description=f'{l}\n\n최소 노출 수 : ',
             color=0x00FFFF
         )
 
