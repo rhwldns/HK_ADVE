@@ -37,67 +37,70 @@ def check():
             return True
         else:
             return False
+
     return commands.check(predicate)
 
 
 @bot.event
 @check()
 async def on_message(msg):
-    if msg.author.bot:
+    if msg.author.bot:  # 봇인지 확인
         pass
 
-    else:
-        if os.path.isfile(f'./Messages/{str(msg.channel.id)}.txt'):
-            pass
-        else:
-            with open(f'./Messages/{str(msg.channel.id)}.txt', 'w') as f:
-                f.write('0')
+    elif msg.content.startswith('.ad '):  # 커맨드 쓰는지 확인 후 return
+        await bot.process_commands(msg)
 
-        with open(f'./Messages/{str(msg.channel.id)}.txt', 'r', encoding="UTF-8") as f:
-            a = int(f.readlines()[0])
+        return
 
-        a += 1
+    else:  # 일반 message 일 경우 else 문 들어감
+        for i in coll.find({}):
+            if int(i['channel1']) == int(msg.channel.id):
+                with open(f'./Messages/{msg.channel.id}.txt', 'r', encoding='UTF-8') as f:
+                    ff = f.readlines()[0]
 
-        with open(f'./Messages/{str(msg.channel.id)}.txt', 'w', encoding="UTF-8") as f:
-            f.write(str(a))
+                if int(i['least']) <= int(ff):
+                    ad_content = ''
+                    with open(f'./Ads/{i["_id"]}.txt', 'r', encoding='UTF-8') as f:
+                        ff = f.readlines()
 
-        if coll.find_one({"channel1": str(msg.channel.id)}) or coll.find_one({"channel2": str(msg.channel.id)}):
+                    for i in ff:
+                        ad_content += i
 
-            if coll.find_one({"channel1": str(msg.channel.id)}):
-                data = coll.find_one({"channel1": str(msg.channel.id)})
-                if int(data['least']) <= int(a):
-                    destr = ''
-                    with open(f'./Ads/{data["name"]}.txt', 'r+', encoding="UTF-8")as f:
-                        des = f.readlines()
-                        for i in des:
-                            destr += i
+                    data = coll.find_one({"_id": str(i['_id'])})
+                    ad_name = data['_id']
                     embed = discord.Embed(
-                        title=data['_id'],
-
-                        description=str(destr),
+                        title=str(ad_name),
+                        description=str(ad_content),
                         color=0x00FFFF
                     )
                     await msg.channel.send(embed=embed)
-                else:
-                    pass
 
-            elif coll.find_one({"channel2": str(msg.channel.id)}):
-                data = coll.find_one({"channel1": str(msg.channel.id)})
-                if int(data['least']) <= int(a):
-                    with open(f'./Ads/{data["name"]}.txt', 'r+', encoding="UTF-8")as f:
-                        des = f.readlines()
-                        for i in des:
-                            des += i
+            if int(i['channel2']) == int(msg.channel.id):
+                with open(f'./Messages/{msg.channel.id}.txt', 'r', encoding='UTF-8') as f:
+                    ff = f.readlines()[0]
+
+                if int(i['least']) <= int(ff):
+                    ad_content = ''
+                    with open(f'./Ads/{i["_id"]}.txt', 'r', encoding='UTF-8') as f:
+                        ff = f.readlines()
+
+                    for i in ff:
+                        ad_content += i
+
                     embed = discord.Embed(
-                        title=data['_id'],
-                        description=str(des),
+                        title=str(i['_id']),
+                        description=str(ad_content),
                         color=0x00FFFF
                     )
                     await msg.channel.send(embed=embed)
-                else:
-                    pass
 
-    await bot.process_commands(msg)
+            else:
+                continue
+
+        file_list = [file for file in os.listdir('./Messages/') if file.endswith(".txt")]
+        for i in file_list:
+            with open(f'./Messages/{i}.txt', 'a', encoding='UTF-8') as f:
+                f.truncate(0)
 
 
 @bot.command(name='create')
@@ -275,14 +278,13 @@ async def sub_expose(ctx, *, name):
 @bot.command(name='help')
 @check()
 async def help_commands(ctx):
-
     embed = discord.Embed(
         title='HKAD 봇 도움말',
         description='',
         color=0x00FFFF
     )
     embed.add_field(
-        name='광고를 적용하는 방법', # 1~6 완료
+        name='광고를 적용하는 방법',  # 1~6 완료
         value='1) `.ad create name` - name의 광고 생성\n'
               '2) `.ad frequency name 최소값 최대값` - name 광고 빈도 설정\n'
               '3) `.ad time name 노출회수` - name 광고 노출 수 설정\n'
@@ -292,13 +294,15 @@ async def help_commands(ctx):
         inline=False
     )
     embed.add_field(
-        name='부차적인 명령어', # admin add 까지 완료
+        name='부차적인 명령어',  # admin add 까지 완료
         value='`.ad list` - 광고 목록 표시\n'
               '`.ad delete name` - name 광고 삭제\n'
               '`.ad detail name` - name 광고 정보 표시\n'
               '`.ad administrator-add @mention` - 해당 사람에게게 광고명령어 사용 권한 추가\n'
               '`.ad administrator-sub @mention` - 해당 사람에게 광고 명령어 사용 권한 제거'
     )
+
+    await ctx.send(embed=embed)
 
 
 @bot.command(name='list')
