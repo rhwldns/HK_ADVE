@@ -50,6 +50,80 @@ async def on_message(msg):
 
         return
 
+    else:
+        with open(f'./Messages/{msg.channel.id}.txt', 'r', encoding="UTF-8") as f:
+            a = f.readlines()
+            a = int(a[0])
+            a = a + 1
+
+        with open(f'./Messages/{msg.channel.id}.txt', 'a', encoding="UTF-8") as f:
+            f.truncate(0)
+            f.write(str(a))
+
+        for i in coll.find({}):
+            if int(i['channel1']) == int(msg.channel.id):
+                if int(i['least']) >= int(a):
+                    if int(i['count1']) >= int(i['count']): # 노출 회수 넘었는지 확인
+                        continue
+
+                    else:
+                        with open(f'./Ads/{i["_id"]}.txt', 'r', encoding="UTF-8") as f:
+                            ff = f.readlines()
+
+                        asdf = ''
+                        for iii in ff:
+                            asdf += str(iii)
+                        embed = discord.Embed(
+                            title=f'{i["_id"]}',
+                            description=f'{asdf}',
+                            color=0x00FFFF
+                        )
+                        find = {"_id": str(i['_id'])}
+                        set_data = {"$inc": {"count1": 1}}
+                        coll.update_one(find, set_data)
+                        chn = bot.get_channel(850312230742392852)
+                        em = discord.Embed(
+                            title='HK AD ㅣ Log',
+                            description=f'`{await bot.fetch_channel(int(msg.channel.id))}`채널 - '
+                                        f'`{str(i["_id"])}`광고 전송 완료',
+                            color=0x00ff00
+                        )
+                        await msg.channel.send(embed=embed)
+                        await chn.send(embed=em)
+
+                else:
+                    continue
+            elif int(i['channel2']) == int(msg.channel.id):
+                if int(i['least']) >= int(a):
+                    if int(i['count1']) >= int(i['count']):  # 노출 회수 넘었는지 확인
+                        continue
+
+                    else:
+                        with open(f'./Ads/{i["_id"]}.txt', 'r', encoding="UTF-8") as f:
+                            ff = f.readlines()
+
+                        asdf = ''
+                        for iii in ff:
+                            asdf += str(iii)
+                        embed = discord.Embed(
+                            title=f'{i["_id"]}',
+                            description=f'{asdf}',
+                            color=0x00FFFF
+                        )
+                        find = {"_id": str(i['_id'])}
+                        set_data = {"$inc": {"count1": 1}}
+                        coll.update_one(find, set_data)
+                        chn = bot.get_channel(850312230742392852)
+                        em = discord.Embed(
+                            title='HK AD ㅣ Log',
+                            description=f'`{await bot.fetch_channel(int(msg.channel.id))}`채널 - '
+                                        f'`{str(i["_id"])}`광고 전송 완료',
+                            color=0x00ff00
+                        )
+                        await msg.channel.send(embed=embed)
+                        await chn.send(embed=em)
+                else:
+                    continue
 
 
 @bot.command(name='create')
