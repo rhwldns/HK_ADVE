@@ -412,7 +412,7 @@ async def ad_detail(ctx, name: str):
 @bot.command(name='administrator-add')
 async def add_administrator(ctx, user: discord.Member):
     with open('owners.txt', 'a', encoding='UTF-8') as f:
-        f.write(str(user.id) + '\n')
+        f.write(f'{user.id}\n')
     await ctx.send(f'`{await bot.fetch_user(int(user.id))}`님에게 광고 명령어 사용 권한을 추가했습니다.')
 
 
@@ -432,7 +432,7 @@ async def add_administrator(ctx, user: discord.Member):
 async def on_command_error(ctx, error):
     embed = discord.Embed(
         title=':warning: 에러',
-        description=''.join(traceback.format_exception(type(error.__cause__), error.__cause__, error.__cause__.__traceback__ )),
+        description=str(error),
         color=0xff0000
     )
     await ctx.send(embed=embed)
