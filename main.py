@@ -59,89 +59,92 @@ async def on_message(msg):
 
     else:
         for i in coll.find({}):
-            i_channel = i['channel1']
-            i_msg_channel_id = msg.channel.id
-            i_channel2 = i['channel2']
-            if int(i_channel) == int(i_msg_channel_id):
-                find = {"_id": str(i['_id'])}
-                set_data = {"$inc": {"count_chn1": 1}}
-                coll.update_one(find, set_data)
+            if i['channel1'] == None or i['channel2'] == None:
+                continue
+            else:
+                i_channel = i['channel1']
+                i_msg_channel_id = msg.channel.id
+                i_channel2 = i['channel2']
+                if int(i_channel) == int(i_msg_channel_id):
+                    find = {"_id": str(i['_id'])}
+                    set_data = {"$inc": {"count_chn1": 1}}
+                    coll.update_one(find, set_data)
 
-                if int(i['least']) <= int(i['count_chn1']):
-                    if int(i['count1']) >= int(i['count']):
+                    if int(i['least']) <= int(i['count_chn1']):
+                        if int(i['count1']) >= int(i['count']):
 
-                        continue
+                            continue
 
-                    else:
-                        with open(f'./Ads/{i["_id"]}.txt', 'r', encoding="UTF-8") as f:
-                            ff = f.readlines()
+                        else:
+                            with open(f'./Ads/{i["_id"]}.txt', 'r', encoding="UTF-8") as f:
+                                ff = f.readlines()
 
-                        asdf = ''
-                        for iii in ff:
-                            asdf += str(iii)
-                        embed = discord.Embed(
-                            title=f'{i["_id"]}',
-                            description=f'{asdf}',
-                            color=0x00FFFF
-                        )
-                        find = {"_id": str(i['_id'])}
-                        set_data = {"$inc": {"count1": 1}}
-                        coll.update_one(find, set_data)
-                        chn = bot.get_channel(850312230742392852)
-                        em = discord.Embed(
-                            title='HK AD ㅣ Log',
-                            description=f'`{await bot.fetch_channel(int(msg.channel.id))}`채널 - '
-                                        f'`{str(i["_id"])}`광고 전송 완료',
-                            color=0x00ff00
-                        )
-                        find = {"_id": str(i['_id'])}
-                        set_data = {"$set": {"count_chn1": 0}}
-                        coll.update_one(find, set_data)
-                        await msg.channel.send(embed=embed)
-                        await chn.send(embed=em)
-
-                else:
-                    continue
-
-            elif int(i_channel2) == int(i_msg_channel_id):
-                find = {"_id": str(i['_id'])}
-                set_data = {"$inc": {"count_chn2": 1}}
-                coll.update_one(find, set_data)
-
-                if int(i['least']) >= int(i['count_chn2']):
-                    if int(i['count1']) >= int(i['count']):
-                        continue
+                            asdf = ''
+                            for iii in ff:
+                                asdf += str(iii)
+                            embed = discord.Embed(
+                                title=f'{i["_id"]}',
+                                description=f'{asdf}',
+                                color=0x00FFFF
+                            )
+                            find = {"_id": str(i['_id'])}
+                            set_data = {"$inc": {"count1": 1}}
+                            coll.update_one(find, set_data)
+                            chn = bot.get_channel(850312230742392852)
+                            em = discord.Embed(
+                                title='HK AD ㅣ Log',
+                                description=f'`{await bot.fetch_channel(int(msg.channel.id))}`채널 - '
+                                            f'`{str(i["_id"])}`광고 전송 완료',
+                                color=0x00ff00
+                            )
+                            find = {"_id": str(i['_id'])}
+                            set_data = {"$set": {"count_chn1": 0}}
+                            coll.update_one(find, set_data)
+                            await msg.channel.send(embed=embed)
+                            await chn.send(embed=em)
 
                     else:
-                        with open(f'./Ads/{i["_id"]}.txt', 'r', encoding="UTF-8") as f:
-                            ff = f.readlines()
+                        continue
 
-                        asdf = ''
-                        for iii in ff:
-                            asdf += str(iii)
-                        embed = discord.Embed(
-                            title=f'{i["_id"]}',
-                            description=f'{asdf}',
-                            color=0x00FFFF
-                        )
-                        find = {"_id": str(i['_id'])}
-                        set_data = {"$inc": {"count1": 1}}
-                        coll.update_one(find, set_data)
-                        chn = bot.get_channel(850312230742392852)
-                        em = discord.Embed(
-                            title='HK AD ㅣ Log',
-                            description=f'`{await bot.fetch_channel(int(msg.channel.id))}`채널 - '
-                                        f'`{str(i["_id"])}`광고 전송 완료',
-                            color=0x00ff00
-                        )
-                        find = {"_id": str(i['_id'])}
-                        set_data = {"$set": {"count_chn2": 0}}
-                        coll.update_one(find, set_data)
-                        await msg.channel.send(embed=embed)
-                        await chn.send(embed=em)
+                elif int(i_channel2) == int(i_msg_channel_id):
+                    find = {"_id": str(i['_id'])}
+                    set_data = {"$inc": {"count_chn2": 1}}
+                    coll.update_one(find, set_data)
 
-                else:
-                    continue
+                    if int(i['least']) >= int(i['count_chn2']):
+                        if int(i['count1']) >= int(i['count']):
+                            continue
+
+                        else:
+                            with open(f'./Ads/{i["_id"]}.txt', 'r', encoding="UTF-8") as f:
+                                ff = f.readlines()
+
+                            asdf = ''
+                            for iii in ff:
+                                asdf += str(iii)
+                            embed = discord.Embed(
+                                title=f'{i["_id"]}',
+                                description=f'{asdf}',
+                                color=0x00FFFF
+                            )
+                            find = {"_id": str(i['_id'])}
+                            set_data = {"$inc": {"count1": 1}}
+                            coll.update_one(find, set_data)
+                            chn = bot.get_channel(850312230742392852)
+                            em = discord.Embed(
+                                title='HK AD ㅣ Log',
+                                description=f'`{await bot.fetch_channel(int(msg.channel.id))}`채널 - '
+                                            f'`{str(i["_id"])}`광고 전송 완료',
+                                color=0x00ff00
+                            )
+                            find = {"_id": str(i['_id'])}
+                            set_data = {"$set": {"count_chn2": 0}}
+                            coll.update_one(find, set_data)
+                            await msg.channel.send(embed=embed)
+                            await chn.send(embed=em)
+
+                    else:
+                        continue
 
 
 @bot.command(name='create')
