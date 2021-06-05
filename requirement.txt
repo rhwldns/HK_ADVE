@@ -1,0 +1,4 @@
+pymongo
+EZPaginator
+dotenv
+discord.py

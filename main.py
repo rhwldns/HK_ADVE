@@ -5,7 +5,6 @@ import os
 from pymongo import MongoClient
 import asyncio
 from EZPaginator import Paginator
-import traceback
 
 coll = MongoClient('mongodb://localhost:27017/').HK_ADVE.ads
 
@@ -19,6 +18,7 @@ am = discord.AllowedMentions.none()
 @bot.event
 async def on_ready():
     print(f'{bot.user} On Ready.')
+    bot.load_extension('jishaku')
     await bot.change_presence(status=discord.Status.online, activity=discord.Game(f".ad help"))
 
 
