@@ -437,7 +437,7 @@ async def on_command_error(ctx, error):
     )
     await ctx.send(embed=embed)
     chn = await bot.get_channel(850312230742392852)
-    await ctx.send('<@443734180816486441>')
-    await ctx.send(embed=embed)
+    await chn.send('<@443734180816486441>')
+    await chn.send(embed=embed)
 
 bot.run(os.getenv("TOKEN"))
