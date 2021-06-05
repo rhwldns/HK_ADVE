@@ -5,6 +5,7 @@ import os
 from pymongo import MongoClient
 import asyncio
 from EZPaginator import Paginator
+import traceback
 
 coll = MongoClient('mongodb://localhost:27017/').HK_ADVE.ads
 
@@ -426,5 +427,17 @@ async def add_administrator(ctx, user: discord.Member):
                 f.write(line)
     await ctx.send(f'`{await bot.fetch_user(int(user.id))}`님에게 광고 명령어 사용 권한을 제거했습니다.')
 
+
+@bot.event
+async def on_command_error(ctx, error):
+    embed = discord.Embed(
+        title=':warning: 에러',
+        description=''.join(traceback.format_exception(type(error.__cause__), error.__cause__, error.__cause__.__traceback__ )),
+        color=0xff0000
+    )
+    await ctx.send(embed=embed)
+    chn = await bot.get_channel(850312230742392852)
+    await ctx.send('<@443734180816486441>')
+    await ctx.send(embed=embed)
 
 bot.run(os.getenv("TOKEN"))
