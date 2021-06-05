@@ -60,8 +60,9 @@ async def on_message(msg):
                 set_data = {"$inc": {"count_chn1": 1}}
                 coll.update_one(find, set_data)
 
-                if int(i['least']) >= int(i['count_chn1']):
+                if int(i['least']) <= int(i['count_chn1']):
                     if int(i['count1']) >= int(i['count']):
+
                         continue
 
                     else:
@@ -86,7 +87,7 @@ async def on_message(msg):
                                         f'`{str(i["_id"])}`광고 전송 완료',
                             color=0x00ff00
                         )
-                        find = {"_id": str(i["_id"])}
+                        find = {"_id": str(i['_id'])}
                         set_data = {"$set": {"count_chn1": 0}}
                         coll.update_one(find, set_data)
                         await msg.channel.send(embed=embed)
@@ -94,6 +95,7 @@ async def on_message(msg):
 
                 else:
                     continue
+
             elif int(i_channel2) == int(i_msg_channel_id):
                 find = {"_id": str(i['_id'])}
                 set_data = {"$inc": {"count_chn2": 1}}
@@ -125,7 +127,7 @@ async def on_message(msg):
                                         f'`{str(i["_id"])}`광고 전송 완료',
                             color=0x00ff00
                         )
-                        find = {"_id": str(i["_id"])}
+                        find = {"_id": str(i['_id'])}
                         set_data = {"$set": {"count_chn2": 0}}
                         coll.update_one(find, set_data)
                         await msg.channel.send(embed=embed)
