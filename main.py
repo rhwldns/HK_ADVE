@@ -379,11 +379,31 @@ async def ad_list(ctx):
         ad_least = ad_data['least']
         ad_max = ad_data['max']
         ad_count = ad_data['count']
-        embed = discord.Embed(
-            title=f'{i.replace(".txt", "")}',
-            description=f'{l}\n\n최소 노출 수 : {ad_least}\n최대 노출 수 : {ad_max}\n현재 노출 횟수 : {ad_count}',
-            color=0x00FFFF
-        )
+        ad_chn1 = ad_data['channel1']
+        ad_chn2 = ad_data['channel2']
+        if ad_chn1 == None:
+            embed = discord.Embed(
+                title=f'{i.replace(".txt", "")}',
+                description=f'광고 내용 : ```\n{l}\n```\n\n최소 노출 수 : `{ad_least}`\n최대 노출 수 : '
+                            f'`{ad_max}`\n현재 노출 횟수 : `{ad_count}`\n채널 1 : 없음\n채널 2 : <#{ad_chn2}>',
+                color=0x00FFFF
+            )
+
+        elif ad_chn2 == None:
+            embed = discord.Embed(
+                title=f'{i.replace(".txt", "")}',
+                description=f'광고 내용 : ```\n{l}\n```\n\n최소 노출 수 : `{ad_least}`\n최대 노출 수 : '
+                            f'`{ad_max}`\n현재 노출 횟수 : `{ad_count}`\n채널 1 : <#{ad_chn1}>\n채널 2 : 없음',
+                color=0x00FFFF
+            )
+
+        elif ad_chn1 == None and ad_chn2 == None:
+            embed = discord.Embed(
+                title=f'{i.replace(".txt", "")}',
+                description=f'광고 내용 : ```\n{l}\n```\n\n최소 노출 수 : `{ad_least}`\n최대 노출 수 : '
+                            f'`{ad_max}`\n현재 노출 횟수 : `{ad_count}`\n채널 1 : 없음\n채널 2 : 없음',
+                color=0x00FFFF
+            )
 
         embeds.append(embed)
     msg = await ctx.send(embed=embeds[0])
