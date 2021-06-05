@@ -35,6 +35,12 @@ def check():
         if str(ctx.author.id) in line:
             return True
         else:
+            embed = discord.Embed(
+                title=':warning: 에러',
+                description='접근 권한이 없습니다.',
+                color=0xff0000
+            )
+            await ctx.send(embed=embed)
             return False
 
     return commands.check(predicate)
@@ -265,7 +271,7 @@ async def add_expose(ctx, *, name):
         setdata = {"$set": {'channel1': int(msg)}}
         coll.update_one(find, setdata)
 
-        a = await ctx.send('만약 채널을 하나 더 추가하고 싶은 경우에는 아래 :white_check_mark: 이모지를 눌러주세요.\n시간 제한 : 10초')
+        a = await ctx.send('만약 채널을 하나 더 추가하고 싶은 경우에는 아래 :white_check_mark: 이모지를 눌러주세요.\n\n시간 제한 : 10초')
         await a.add_reaction('✅')
 
         def check(reaction, user):
@@ -286,7 +292,7 @@ async def add_expose(ctx, *, name):
             else:
                 await ctx.send('채널 추가 중단, 첫 번째 채널만 등록했습니다.')
         except asyncio.TimeoutError:
-            await ctx.send('시간이 초과되었습니다.')
+            await ctx.send('채널 추가 중단, 첫 번째 채널만 등록했습니다.')
 
         await ctx.reply('등록이 완료되었습니다!', allowed_mentions=am)
 
@@ -436,7 +442,7 @@ async def on_command_error(ctx, error):
         color=0xff0000
     )
     await ctx.send(embed=embed)
-    chn = await bot.get_channel(850312230742392852)
+    chn = bot.get_channel(850312230742392852)
     await chn.send('<@443734180816486441>')
     await chn.send(embed=embed)
 
