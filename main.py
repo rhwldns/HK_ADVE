@@ -43,9 +43,9 @@ def check():
 @check()
 async def on_message(msg):
     if msg.author.bot:  # 봇인지 확인
-        pass
+        return
 
-    elif msg.content.startswith('.ad '):  # 커맨드 쓰는지 확인 후 return
+    elif msg.content.startswith('.ad ') or '.ad' in msg.content:  # 커맨드 쓰는지 확인 후 return
         await bot.process_commands(msg)
 
         return
@@ -61,9 +61,11 @@ async def on_message(msg):
             f.write(str(a))
 
         for i in coll.find({}):
-            if int(i['channel1']) == int(msg.channel.id):
+            i_channel = i['channel1']
+            i_msg_channel_id = msg.channel.id
+            if int(i_channel) == int(i_msg_channel_id):
                 if int(i['least']) >= int(a):
-                    if int(i['count1']) >= int(i['count']): # 노출 회수 넘었는지 확인
+                    if int(i['count1']) >= int(i['count']):
                         continue
 
                     else:
@@ -88,6 +90,8 @@ async def on_message(msg):
                                         f'`{str(i["_id"])}`광고 전송 완료',
                             color=0x00ff00
                         )
+                        with open(f'./Messages/{msg.channel.id}.txt', 'w', encoding="UTF-8") as f:
+                            f.write('0')
                         await msg.channel.send(embed=embed)
                         await chn.send(embed=em)
 
@@ -124,6 +128,8 @@ async def on_message(msg):
                         await chn.send(embed=em)
                 else:
                     continue
+            with open(f'./Messages/{msg.channel.id}.txt', 'w', encoding="UTF-8") as f:
+                f.write('0')
 
 
 @bot.command(name='create')
