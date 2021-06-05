@@ -51,20 +51,16 @@ async def on_message(msg):
         return
 
     else:
-        with open(f'./Messages/{msg.channel.id}.txt', 'r', encoding="UTF-8") as f:
-            a = f.readlines()
-            a = int(a[0])
-            a = a + 1
-
-        with open(f'./Messages/{msg.channel.id}.txt', 'a', encoding="UTF-8") as f:
-            f.truncate(0)
-            f.write(str(a))
-
         for i in coll.find({}):
             i_channel = i['channel1']
             i_msg_channel_id = msg.channel.id
+            i_channel2 = i['channel2']
             if int(i_channel) == int(i_msg_channel_id):
-                if int(i['least']) >= int(a):
+                find = {"_id": str(i['_id'])}
+                set_data = {"$inc": {"count_chn1": 1}}
+                coll.update_one(find, set_data)
+
+                if int(i['least']) >= int(i['count_chn1']):
                     if int(i['count1']) >= int(i['count']):
                         continue
 
@@ -90,16 +86,21 @@ async def on_message(msg):
                                         f'`{str(i["_id"])}`광고 전송 완료',
                             color=0x00ff00
                         )
-                        with open(f'./Messages/{msg.channel.id}.txt', 'w', encoding="UTF-8") as f:
-                            f.write('0')
+                        find = {"_id": str(i["_id"])}
+                        set_data = {"$set": {"count_chn1": 0}}
+                        coll.update_one(find, set_data)
                         await msg.channel.send(embed=embed)
                         await chn.send(embed=em)
 
                 else:
                     continue
-            elif int(i['channel2']) == int(msg.channel.id):
-                if int(i['least']) >= int(a):
-                    if int(i['count1']) >= int(i['count']):  # 노출 회수 넘었는지 확인
+            elif int(i_channel2) == int(i_msg_channel_id):
+                find = {"_id": str(i['_id'])}
+                set_data = {"$inc": {"count_chn2": 1}}
+                coll.update_one(find, set_data)
+
+                if int(i['least']) >= int(i['count_chn2']):
+                    if int(i['count1']) >= int(i['count']):
                         continue
 
                     else:
@@ -124,12 +125,14 @@ async def on_message(msg):
                                         f'`{str(i["_id"])}`광고 전송 완료',
                             color=0x00ff00
                         )
+                        find = {"_id": str(i["_id"])}
+                        set_data = {"$set": {"count_chn2": 0}}
+                        coll.update_one(find, set_data)
                         await msg.channel.send(embed=embed)
                         await chn.send(embed=em)
+
                 else:
                     continue
-            with open(f'./Messages/{msg.channel.id}.txt', 'w', encoding="UTF-8") as f:
-                f.write('0')
 
 
 @bot.command(name='create')
@@ -149,7 +152,17 @@ async def create_ad(ctx, *, content):
             f.truncate()
 
     coll.insert_one(
-        {"_id": str(content), "count1": 0, "least": None, "max": None, "count": 0, "channel1": None, "channel2": None}
+        {
+            "_id": str(content),
+            "count1": 0,
+            "least": None,
+            "max": None,
+            "count": 0,
+            "channel1": None,
+            "channel2": None,
+            "count_chn1": 0,
+            "count_chn2": 0
+        }
     )
     return await ctx.reply('광고 등록이 완료되었습니다.', allowed_mentions=am)
 
